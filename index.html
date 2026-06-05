@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔮 測驗：你是哪位台灣頂流女藝人？</title>
+    <style>
+        :root {
+            --primary: #ff4757;
+            --primary-gradient: linear-gradient(135deg, #ff4757, #ff6b81);
+            --secondary: #ffa502;
+            --dark: #1e2229;
+            --light: #f5f6fa;
+            --gray: #8f9cae;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 微動態漸層背景 */
+        body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* 磨砂玻璃卡片 */
+        .container {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            box-shadow: var(--shadow);
+            padding: 45px 35px;
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #2f3542, #ff4757);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #57606f;
+            font-size: 1.05rem;
+            margin-bottom: 35px;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* 進度條 */
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4757, #ffa502, #23d5ab);
+            background-size: 200% 100%;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .question-text {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 35px;
+            color: #2f3542;
+            line-height: 1.5;
+        }
+
+        .btn-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* 選項按鈕 */
+        .option-btn {
+            background-color: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-radius: 18px;
+            padding: 20px 26px;
+            font-size: 1.05rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-align: left;
+            color: #2f3542;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        .option-btn:hover {
+            border-color: transparent;
+            background: var(--primary-gradient);
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 71, 87, 0.2);
+        }
+
+        /* 主動按鈕 */
+        .btn-main {
+            background: var(--primary-gradient);
+            color: white;
+            border: none;
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 25px rgba(255, 71, 87, 0.35);
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 15px 30px rgba(255, 71, 87, 0.5);
+        }
+
+        /* 新：完整照片外框設計（不切圖） */
+        .result-image-wrapper {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+            margin: 0 auto 25px auto;
+            max-width: 90%;
+            display: inline-block;
+        }
+
+        .result-image {
+            width: 100%;
+            max-height: 380px; /* 控制最大高度，避免圖片過大 */
+            object-fit: contain; /* 確保相片完整呈現不被裁切 */
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* 結果名字美化 */
+        .result-title-area {
+            margin-bottom: 20px;
+        }
+
+        .result-calc-text {
+            color: var(--secondary);
+            font-weight: 800;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        .result-name {
+            font-size: 2.6rem;
+            font-weight: 900;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            display: inline-block;
+        }
+
+        /* 特質標籤區 */
+        .tag-container {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+            padding: 0 10px;
+        }
+
+        .tag {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(255, 71, 87, 0.15);
+        }
+
+        /* 內容卡片 */
+        .result-card {
+            background-color: rgba(0, 0, 0, 0.03);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: left;
+            margin-bottom: 35px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2f3542;
+            margin-top: 0;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-content {
+            font-size: 1rem;
+            line-height: 1.7;
+            color: #57606f;
+            margin-bottom: 25px;
+        }
+
+        .work-highlight {
+            background: #ffffff;
+            padding: 14px 18px;
+            border-radius: 14px;
+            border-left: 5px solid var(--secondary);
+            font-weight: 700;
+            color: #2f3542;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+            line-height: 1.6;
+        }
+
+        /* 後台設定區 */
+        .config-area {
+            margin-top: 45px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+            padding-top: 25px;
+        }
+
+        .config-title {
+            color: var(--gray);
+            font-size: 0.88rem;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .config-title:hover {
+            color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            margin-top: 12px;
+            padding: 15px;
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.6);
+            font-family: monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 1. 歡迎首頁 -->
+    <div id="start-page">
+        <div style="font-size: 3.5rem; margin-bottom: 10px;">👑</div>
+        <h1>台灣頂流女藝人特質測驗</h1>
+        <p class="subtitle">深度剖析你的潛在個性，看看你與哪位台灣頂流女藝人的氣場、代表作與生命特質最契合！</p>
+        <button class="btn-main" onclick="startQuiz()">開始命定測驗</button>
+        
+        <div class="config-area">
+            <span class="config-title" onclick="toggleConfig()">⚙️ 查看 / 修改資料庫 (JSON)</span>
+            <div id="config-box" class="hidden">
+                <textarea id="json-textarea"></textarea>
+                <button class="btn-main" style="padding: 10px 25px; font-size:0.95rem; border-radius:12px; margin-top:12px; box-shadow:none;" onclick="saveConfig()">儲存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 測驗核心區 -->
+    <div id="quiz-page" class="hidden">
+        <div class="progress-container">
+            <div id="progress-bar" class="progress-bar"></div>
+        </div>
+        <div>
+            <div id="question-text" class="question-text">題目載入中...</div>
+            <div id="options-container" class="btn-list"></div>
+        </div>
+    </div>
+
+    <!-- 3. 測驗結果揭曉 -->
+    <div id="result-page" class="hidden">
+        
+        <div class="result-title-area">
+            <div class="result-calc-text">🔮 經精密氣場計算，你最像 ——</div>
+            <div id="result-name" class="result-name">藝人姓名</div>
+        </div>
+
+        <!-- 修正後的相片完整外框 -->
+        <div class="result-image-wrapper">
+            <img id="result-img" class="result-image" src="" alt="藝人照片">
+        </div>
+        
+        <!-- 核心特質標籤 -->
+        <div id="result-tags" class="tag-container"></div>
+
+        <!-- 詳細特質與作品解析 -->
+        <div class="result-card">
+            <h4 class="section-title">🔮 靈魂個性特色</h4>
+            <div id="result-desc" class="section-content">個性描述</div>
+
+            <h4 class="section-title">🎬 命定必聽 / 必看代表作</h4>
+            <div id="result-work" class="work-highlight">代表作名稱</div>
+        </div>
+
+        <button class="btn-main" onclick="restartQuiz()">再測一次</button>
+    </div>
+</div>
+
+<script>
+    // 1. 女藝人資料庫
+    const defaultCelebrities = [
+        {
+            "name": "王淨 (Gingle)",
+            "imageUrl": "王淨.avif", 
+            "tags": ["新生代影后", "古靈精怪", "情感充沛", "極具靈氣"],
+            "work": "🎬 戲劇/電影：《返校》、《瀑布》、《關於我和鬼變成家人的那件事》、《人選之人-造浪者》",
+            "description": "你擁有一雙會說話的眼睛，骨子裡散發著古靈精怪、敢愛敢恨的靈氣。你情感極其細膩且充沛，能夠快速感同身受身邊人的喜怒哀樂。在群體中你充滿了神祕又迷人的戲劇張力，不鳴則已，一鳴驚人，注定是活在聚光燈下的焦點人物！",
+            "traits": { "A": 4, "B": 3, "C": 2, "D": 2, "E": 1 }
+        },
+        {
+            "name": "蔡依林 (Jolin)",
+            "imageUrl": "蔡依林.webp", 
+            "tags": ["地才精神", "完美主義", "舞台女王", "時尚天后"],
+            "work": "🎵 歌曲：《玫瑰少年》、《怪美的》、《舞娘》、《UGLY BEAUTY》",
+            "description": "你擁有驚人的毅力與極高的自我要求。面對質疑與挫折，你絕不輕言認輸，而是用實力讓反對你的人閉嘴。你是職場或學業上不折不扣的頂級精英，敢於打破常規、擁抱非主流。當你下定決心做一件事，那股霸氣與專注將無人能擋！",
+            "traits": { "A": 2, "B": 1, "C": 5, "D": 1, "E": 2 }
+        },
+        {
+            "name": "田馥甄 (Hebe)",
+            "imageUrl": "田馥甄.jpg",
+            "tags": ["空靈歌姬", "文青女神", "內斂低調", "人間清醒"],
+            "work": "🎵 歌曲：《小幸運》、《寂寞寂寞好不好》、《無人知曉》、《不醉不會》",
+            "description": "你散發著一種「孤獨而自由」的文青氣質。你話語不多，卻字字句句充滿哲理，不喜歡盲目追隨俗世的喧囂，更享受與自己心靈的深度對話。在他人眼裡你是「人間清醒」的代表，帶著一絲空靈與淡然，優雅地在世界的一隅綻放光芒。",
+            "traits": { "A": 1, "B": 5, "C": 2, "D": 3, "E": 1 }
+        },
+        {
+            "name": "葉舒華 (Shuhua)",
+            "imageUrl": "葉書華二.jpg",
+            "tags": ["黃金忙內", "直率霸氣", "四次元幽默", "自信反差美"],
+            "work": "🎵 歌曲：(G)I-DLE《TOMBOY》、《Nxde》、《Queencard》 / 綜藝嘉賓",
+            "description": "你擁有驚人的「反差萌」！外表看起來是個精緻高冷的冰山美人，但一開口卻是直率、敢言、充滿四次元幽默感的超級活寶。你非常做自己，對待粉絲或朋友真誠不造作，骨子裡更有著一股不願被定義的叛逆與強大的心靈自信！",
+            "traits": { "A": 5, "B": 1, "C": 4, "D": 1, "E": 2 }
+        },
+        {
+            "name": "曾沛慈 (Pets)",
+            "imageUrl": "pets-xl.jpg",
+            "tags": ["溫慢療癒", "率真親和", "傻姐正能量", "金鐘視后"],
+            "work": "🎬 戲劇 / 🎵 歌曲：《我們與惡的距離》、《終極三國》、《一個人想著一個人》",
+            "description": "你就像冬日裡的太陽一樣溫暖！你個性率真、善良、帶點讓人想保護的傻姐姐氣質。你在朋友中通常是最佳的傾聽者與定海神針，心思細膩且富有包容力。你總是用最樸實、最真誠的情感去對待每個人，散發著無可取代的超強親和力。",
+            "traits": { "A": 3, "B": 2, "C": 1, "D": 5, "E": 5 }
+        }
+    ];
+
+    // 2. 測驗題目設計
+    const questions = [
+        {
+            "text": "1. 好不容易迎來完全屬於自己的休假日，你最享受哪種充電方式？",
+            "options": [
+                { "text": "跟三五好友聚會，隨性聊天搞笑、吃美食，享受熱鬧氣氛", "type": "A" },
+                { "text": "挑一本喜歡的小說或看場文藝電影，沈浸在深刻的思想世界中", "type": "B" },
+                { "text": "去健身房瘋狂流汗、或上進修課充實自己，把目標清單勾掉", "type": "C" },
+                { "text": "窩在家裡做料理、打掃、陪伴家人或寵物，感受平淡的幸福", "type": "D" },
+                { "text": "完全不設限！睡到自然醒，想幹嘛就幹嘛，自由自在最重要", "type": "E" }
+            ]
+        },
+        {
+            "text": "2. 當你在團隊中遇到不講理、讓人火冒三丈的衝突時，你的第一直覺是？",
+            "options": [
+                { "text": "主動講個笑話幽默帶過，不希望氣氛變得很尷尬嚴肅", "type": "A" },
+                { "text": "保持冷靜與距離，默默在心裡看清對方的邏輯謬誤與層次", "type": "B" },
+                { "text": "氣場全開！直截了當地指出問題核心，捍衛立場就事論事", "type": "C" },
+                { "text": "先溫柔地安撫大家的浮躁情緒，扮演調解兩方摩擦的潤滑劑", "type": "D" },
+                { "text": "有話直說，管他是誰！用直率甚至帶點開玩笑的方式把不爽講出來", "type": "E" }
+            ]
+        },
+        {
+            "text": "3. 朋友眼中的你，最常獲得以下哪一種讚美？",
+            "options": [
+                { "text": "古靈精怪、富有活力，有你在的地方就有滿滿的亮點", "type": "A" },
+                { "text": "很有思想內涵與個人品味，說出來的話往往很有深度", "type": "B" },
+                { "text": "做事非常有魄力、決斷力，關鍵時刻是個可靠的領導者", "type": "C" },
+                { "text": "貼心又善解人意，是最溫暖且懂得傾聽與包容的避風港", "type": "D" },
+                { "text": "真實不做作、沒心機，跟著你相處完全不需要小心翼翼地偽裝", "type": "E" }
+            ]
+        },
+        {
+            "text": "4. 如果要選擇一套最符合你靈魂氣質的出門穿搭風格，你會選？",
+            "options": [
+                { "text": "獨特亮眼、帶有點復古少女感或撞色的小叛逆穿搭", "type": "A" },
+                { "text": "簡約、舒適、充滿質感與大地色調的文青風或寬鬆日系風", "type": "B" },
+                { "text": "剪裁俐落、有氣場的西裝外套、皮衣或是個性十足的歐美風", "type": "C" },
+                { "text": "柔和色調、溫柔且充滿親和力的針織衫或舒適洋裝", "type": "D" },
+                { "text": "沒那麼多規矩！舒服運動風、大學T配上牛仔褲直接出門", "type": "E" }
+            ]
+        },
+        {
+            "text": "5. 靜下心來，你內心最核心渴望的生命終極目標是？",
+            "options": [
+                { "text": "活得精彩有趣，在有限的人生裡體驗各種好玩、有挑戰的事物", "type": "A" },
+                { "text": "追求精神靈魂的絕對自由與富足，保持不隨波逐流的清醒", "type": "B" },
+                { "text": "站上自我領域的巔峰，證明自己的實力並發揮強大的影響力", "type": "C" },
+                { "text": "身邊所愛的人都能平安幸福，擁有圓滿的人際與家庭關係", "type": "D" },
+                { "text": "問心無愧地勇敢做自己，不受世俗眼光的框架所束縛", "type": "E" }
+            ]
+        }
+    ];
+
+    let currentIdx = 0;
+    let scores = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
+    let db = [...defaultCelebrities];
+
+    document.getElementById('json-textarea').value = JSON.stringify(defaultCelebrities, null, 4);
+
+    function toggleConfig() {
+        document.getElementById('config-box').classList.toggle('hidden');
+    }
+
+    function saveConfig() {
+        try {
+            const parsed = JSON.parse(document.getElementById('json-textarea').value);
+            if (!Array.isArray(parsed)) throw new Error("必須是個陣列格式");
+            db = parsed;
+            alert("✨ 資料庫儲存成功！");
+            toggleConfig();
+        } catch(e) {
+            alert("❌ 格式錯誤，請檢查 JSON 格式。");
+        }
+    }
+
+    function startQuiz() {
+        currentIdx = 0;
+        scores = { "A": 0, "B": 0, "C": 0, "D": 0, "E": 0 };
+        document.getElementById('start-page').classList.add('hidden');
+        document.getElementById('result-page').classList.add('hidden');
+        document.getElementById('quiz-page').classList.remove('hidden');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const progress = (currentIdx / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        const q = questions[currentIdx];
+        document.getElementById('question-text').innerText = q.text;
+        
+        const container = document.getElementById('options-container');
+        container.innerHTML = '';
+
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = opt.text;
+            btn.onclick = () => {
+                scores[opt.type] += 3; 
+                currentIdx++;
+                if(currentIdx < questions.length) {
+                    showQuestion();
+                } else {
+                    showResult();
+                }
+            };
+            container.appendChild(btn);
+        });
+    }
+
+    function showResult() {
+        document.getElementById('quiz-page').classList.add('hidden');
+        document.getElementById('result-page').classList.remove('hidden');
+
+        let winner = db[0];
+        let maxSim = -1;
+
+        const getLen = (v) => Math.sqrt(v.A*v.A + v.B*v.B + v.C*v.C + v.D*v.D + (v.E||0)*(v.E||0));
+        const userLen = getLen(scores);
+
+        db.forEach(person => {
+            const dotProduct = (scores.A * (person.traits.A||0)) + 
+                               (scores.B * (person.traits.B||0)) + 
+                               (scores.C * (person.traits.C||0)) + 
+                               (scores.D * (person.traits.D||0)) +
+                               (scores.E * (person.traits.E||0));
+            const personLen = getLen(person.traits);
+            let sim = (userLen > 0 && personLen > 0) ? (dotProduct / (userLen * personLen)) : 0;
+
+            if (sim > maxSim) {
+                maxSim = sim;
+                winner = person;
+            }
+        });
+
+        document.getElementById('result-name').innerText = winner.name;
+        document.getElementById('result-desc').innerText = winner.description;
+        document.getElementById('result-work').innerText = winner.work;
+        document.getElementById('result-img').src = winner.imageUrl;
+
+        const tagContainer = document.getElementById('result-tags');
+        tagContainer.innerHTML = '';
+        winner.tags.forEach(t => {
+            const span = document.createElement('span');
+            span.className = 'tag';
+            span.innerText = `# ${t}`;
+            tagContainer.appendChild(span);
+        });
+    }
+
+    function restartQuiz() {
+        document.getElementById('result-page').classList.add('hidden');
+        document.getElementById('start-page').classList.remove('hidden');
+    }
+</script>
+
+</body>
+</html>
